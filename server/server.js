@@ -11,15 +11,27 @@ const port = process.env.PORT || 5000;
 
 const { MongoClient } = require('mongodb');
 const dbClient = new MongoClient(process.env.DATABASE_URI, {useNewUrlParser: true, useUnifiedTopology: true});
-// app.use(require('./routes/record'));
 
-app.listen(port, () => {
-  dbClient.connect(err => {
-    const collection = dbClient.db('sample_mflix').collection('movies');
-    if (collection) {
-      console.log('Successfully connected to MongoDB');
-    }
+/* Function is triggered when user logs in. Retrieves documents for specified user. Results populate table on front end. */
+async function userQuery(user) {
+  try {
+    await dbClient.connect();
+    console.log('MongoDB connected to server');
+    const db = dbClient.db('retire_db');
+
+    // Get the collection
+    const col = db.collection('userQueries');
+  
+    // Get all documents matching queried user
+    const docs = await col.find({username:user}).toArray();
+    console.log(docs);
+    
+    // Close connection
     dbClient.close();
-  });
-  console.log(`Server is running on port: ${port}`);
-});
+  } catch(err) {
+    console.log(err.stack);
+  }
+}
+
+// app.use(require('./routes/record'));
+app.listen(port, () => console.log(`Server is running on port: ${port}`));
