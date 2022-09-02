@@ -17,6 +17,7 @@ class Login extends React.Component {
             <input type='text'/>
           </label>
           <input type='submit' value='Sign In'/>
+          <input type='submit' value='Create Account'/>
         </form>
       )
     }
