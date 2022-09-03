@@ -4,9 +4,9 @@ function Footer() {
   return (
     <ul className='nav'>
       <li>&copy; 2022</li>
-      <li>Home</li>
-      <li>Calculate</li>
-      <li>About</li>
+      <li><a href='/'>Home</a></li>
+      <li><a href='/calculate'>Calculate</a></li>
+      <li><a href='/about'>About</a></li>
     </ul>
   )
 }
