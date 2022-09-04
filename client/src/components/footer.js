@@ -1,13 +1,17 @@
 import React from 'react';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function Footer() {
   return (
-    <ul className='nav'>
-      <li>&copy; 2022</li>
-      <li><a href='/'>Home</a></li>
-      <li><a href='/calculate'>Calculate</a></li>
-      <li><a href='/about'>About</a></li>
-    </ul>
+      <nav>
+        <ul className='nav'>
+          <li>&copy; 2022</li>
+          <li><a href='/'>Home</a></li>
+          <li><a href='/calculate'>Calculate</a></li>
+          <li><a href='/queries/:user'>Saved Scenarios</a></li>
+          <li><a href='/about'>About</a></li>
+        </ul>
+      </nav>
   )
 }
 
