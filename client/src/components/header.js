@@ -9,7 +9,7 @@ function Header() {
           <ul className='nav'>
             <li><a href='/'>Home</a></li>
             <li><a href='/calculate'>Calculate</a></li>
-            <li><a href='/queries/:user'>Saved Scenarios</a></li>
+            <li><a href='/queries/'>Saved Scenarios</a></li>
             <li><a href='/about'>About</a></li>
           </ul> 
         </nav>  

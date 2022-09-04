@@ -1,11 +1,13 @@
 import React from 'react';
+import { Navigate } from "react-router-dom";
 
 class Login extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
         username: '',
-        password: ''
+        password: '',
+        submitted: false
       };
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmitExisting = this.handleSubmitExisting.bind(this);
@@ -17,7 +19,11 @@ class Login extends React.Component {
     }
 
     handleSubmitExisting(event) {
-      event.preventDefault()
+      event.preventDefault();
+      this.setState({submitted: true});
+      fetch(`http://localhost:3000/queries/${this.state.username}`)
+      .then(res => console.log(res.data));
+
       //console.log(`existing user: ${this.state.username}, ${this.state.password}`)
       // this.setState({
       //   username: '',
@@ -27,6 +33,7 @@ class Login extends React.Component {
 
     handleSubmitNew(event) {
       event.preventDefault()
+      this.setState({submitted: true});
       //console.log(`new user: ${this.state.username}, ${this.state.password}`)
       // this.setState({
       //   username: '',
@@ -37,6 +44,7 @@ class Login extends React.Component {
     render() {
       return (
         <div>
+          {(this.state.submitted===true) && (<Navigate to='/queries' replace={true} />)}
           <form name='existingUser' onSubmit={this.handleSubmitExisting}>
             <p>Enter username and password</p>
             <label>Username:
