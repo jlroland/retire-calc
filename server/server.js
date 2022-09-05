@@ -1,41 +1,23 @@
 'use strict';
 
 const express = require('express');
-const cors = require('cors');
 const superagent = require('superagent');
 const app = express();
-const expRouter = express.Router();
-app.use(cors());
-app.use(express.json());
-app.use('/', expRouter);
-
+const cors = require('cors');
 require('dotenv').config({path: './config.env'});
 const port = process.env.PORT || 5000;
-const dbo = require('./db/connection');
+app.use(cors());
+app.use(express.json());
+app.use(require('./routes/dbRecords'));
 
-expRouter.route('/queries/:user').get(function(req, res) {
-  let user = req.params.user;
-  let dbConnect = dbo.getDb('retire_db');
-  dbConnect
-    .collection('userQueries')
-    .find({username: user})
-    .toArray(function (err, result) {
-      if (err) throw err;
-      res.json(result);
-    });
+const dbo = require('./db/connection');
+app.listen(port, () => {
+  dbo.connectToServer(function (err) {
+    if (err) console.error(err);
+  });
+  console.log(`Server is running on port: ${port}`);
 });
 
-/* Function is triggered when user logs in. Retrieves documents for specified user. Results populate table on front end. */
-// function userQuery(req, res) {
-//   dbClient.connect(err => {
-//     console.log('MongoDB connected to server');
-//     const collection = dbClient.db('retire_db').collection('userQueries');
-//     const docs = collection.find({username: 'jsmith'}).toArray();
-//     console.log(docs);
-//     res.json(docs);
-//     dbClient.close();
-//   });
-// }
 
 /* Function retrieves historical monthly values for Vanguard S&P 500 ETF. Triggered by calculator if database is out of date to repopulate with current data. */
 function getEquities() {
@@ -53,6 +35,4 @@ function getEquities() {
 }
 //getEquities().then((result) => console.log(result));
 
-// app.use(require('./routes/record'));
-app.listen(port, () => console.log(`Server is running on port: ${port}`));
 
