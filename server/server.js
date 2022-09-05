@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(require('./routes/dbRecords'));
 
-const dbo = require('./db/connection');
+const dbo = require('./db_conn/connection');
 app.listen(port, () => {
   dbo.connectToServer(function (err) {
     if (err) console.error(err);

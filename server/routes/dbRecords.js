@@ -1,6 +1,6 @@
 const express = require('express');
 const expRouter = express.Router();
-const dbo = require('../db/connection');
+const dbo = require('../db_conn/connection');
 
 /* Route is triggered when user logs in. Retrieves documents for specified user. Results populate table on front end. */
 expRouter.route('/queries/:user').get(function(req, res) {
