@@ -1,5 +1,5 @@
 import React from 'react';
-//import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 class Login extends React.Component {
     constructor(props) {
@@ -7,7 +7,8 @@ class Login extends React.Component {
       this.state = {
         username: '',
         password: '',
-        submitted: false
+        submitted: false,
+        userExists: false
       };
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmitExisting = this.handleSubmitExisting.bind(this);
@@ -23,7 +24,11 @@ class Login extends React.Component {
       
       fetch(`http://localhost:4000/queries/${this.state.username}`)
       .then(res => res.json())
-      .then(data => console.log(data));
+      .then(data => {
+        console.log(data);
+        if (data) {
+          this.setState({userExists: true});
+        }});
       // fetch(`https://retire-calc-back.herokuapp.com/queries/${this.state.username}`)
       // .then(res => res.json())
       // .then(data => console.log(data))
@@ -49,7 +54,7 @@ class Login extends React.Component {
     render() {
       return (
         <div>
-          {/* {(this.state.submitted===true) && (<Navigate to='/queries' replace={true} />)} */}
+          {(this.state.submitted===true) && (this.state.userExists===true) && (<Navigate to='/queries' replace={true} />)}
           <form name='existingUser' onSubmit={this.handleSubmitExisting}>
             <p>Enter username and password</p>
             <label>Username:
