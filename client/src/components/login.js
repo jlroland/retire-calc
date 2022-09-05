@@ -28,7 +28,9 @@ class Login extends React.Component {
         console.log(data);
         if (data) {
           this.setState({userExists: true});
+          //this.props.history.push(`/queries/${this.state.username}`)
         }});
+      
       // fetch(`https://retire-calc-back.herokuapp.com/queries/${this.state.username}`)
       // .then(res => res.json())
       // .then(data => console.log(data))
@@ -54,7 +56,8 @@ class Login extends React.Component {
     render() {
       return (
         <div>
-          {(this.state.submitted===true) && (this.state.userExists===true) && (<Navigate to='/queries' replace={true} />)}
+          {(this.state.submitted===true) && (this.state.userExists===true) && (<Navigate to={`/queries/${this.state.username}`} replace={true} />)}
+          {/* {(this.state.submitted===true) && (this.state.userExists===false) && (<Navigate to='/queries' replace={true} />)} */}
           <form name='existingUser' onSubmit={this.handleSubmitExisting}>
             <p>Enter username and password</p>
             <label>Username:
