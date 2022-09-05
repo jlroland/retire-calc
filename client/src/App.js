@@ -6,9 +6,10 @@ import Header from './components/header';
 import Footer from './components/footer';
 import Login from './components/login';
 import Calculator from './components/calculator';
-import Queries from './components/savedQueries';
+//import Queries from './components/savedQueries';
 import NoQueries from './components/noQueries';
 import About from './components/about';
+import GetParams from './components/urlParam';
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/calculate' element={<Calculator />} />
         <Route path='/queries/' element={<NoQueries />} />
-          <Route path='/queries/:user' element={<Queries />} />
+        <Route path='/queries/:user' element={<GetParams />} />
         <Route path='/about' element={<About />} />
       </Routes>
       <Footer />

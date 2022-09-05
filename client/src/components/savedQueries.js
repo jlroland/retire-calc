@@ -1,9 +1,16 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
+
+const GetParams = () => {
+  let params = useParams();
+  console.log(params);
+  return(params.user);
+}
 
 class Queries extends React.Component {
   constructor(props) {
     super(props);
-    this.setState = {items: []};
+    this.setState = {items: [0,0,0,0,0,0,0]};
     // this.state = {items: [{
     //   id: 1,
     //   username: 'jsmith',
@@ -30,15 +37,15 @@ class Queries extends React.Component {
     // }]};
   }
 
-  // componentDidMount() {
-  //   fetch('http://localhost:3000/calculate')
-  //     .then((response) => {
-  //       this.setState({items: response.data})
-  //     },
-  //     (error) => {
-  //       console.log(error);
-  //     });
-  // }
+  componentDidMount() {
+    let user = GetParams();
+    fetch(`http://localhost:4000/queries/${user}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        this.setState({items: data});
+        });
+  }
 
   render() {
     return (
