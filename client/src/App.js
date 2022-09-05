@@ -16,10 +16,10 @@ function App() {
       <Header />
       <Routes>
         <Route path='/' element={<Login />} />
-        <Route path='calculate' element={<Calculator />} />
-        <Route path='queries/' element={<NoQueries />} />
-          <Route path='queries/:user' element={<Queries />} />
-        <Route path='about' element={<About />} />
+        <Route path='/calculate' element={<Calculator />} />
+        <Route path='/queries/' element={<NoQueries />} />
+          <Route path='/queries/:user' element={<Queries />} />
+        <Route path='/about' element={<About />} />
       </Routes>
       <Footer />
     </div>
