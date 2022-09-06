@@ -9,7 +9,7 @@ expRouter.route('/exists/:user').get(function(req, res) {
     .collection('users')
     .findOne({username: user}, function (err, result) {
       if (err) throw err;
-      console.log(`User exists: ${result}`);
+      //console.log(`User exists: ${result}`);
       res.json(result);
     });
 });
@@ -24,7 +24,27 @@ expRouter.route('/addUser').post(function(req, res) {
     .collection('users')
     .insertOne(newUser, function (err, result) {
       if (err) throw err;
-      console.log(`User added: ${result}`);
+      //console.log(`User added: ${result}`);
+      res.json(result);
+    });
+});
+
+expRouter.route('/addScenario').post(function(req, res) {
+  let newScenario = {
+    currentAge: req.body.currentAge,
+    retireAge: req.body.retireAge,
+    monthlyContribution: req.body.monthlyAmount,
+    employerContribution: req.body.employerAmount,
+    assetAllocation: req.body.assets,
+    expenseRatio: req.body.expenseRatio,
+    totalPortfolio: req.body.total,
+  };
+  let dbConnect = dbo.getDb('retire_db');
+  dbConnect
+    .collection('userQueries')
+    .insertOne(newScenario, function (err, result) {
+      if (err) throw err;
+      //console.log(`Scenario added: ${result}`);
       res.json(result);
     });
 });
@@ -38,7 +58,7 @@ expRouter.route('/queries/:user').get(function(req, res) {
     .find({username: user})
     .toArray(function (err, result) {
       if (err) throw err;
-      console.log(result);
+      //console.log(result);
       res.json(result);
     });
 });
