@@ -1,6 +1,8 @@
 const express = require('express');
 const expRouter = express.Router();
 const dbo = require('../db_conn/connection');
+const superagent = require('superagent');
+const alphaUrl =`https://www.alphavantage.co/query?function=INFLATION&apikey=${process.env.ALPHA_KEY}`;
 
 expRouter.route('/exists/:user').get(function(req, res) {
   let user = req.params.user;
@@ -61,6 +63,11 @@ expRouter.route('/queries/:user').get(function(req, res) {
       //console.log(result);
       res.json(result);
     });
+});
+
+expRouter.route('/calculate').get(function(req, res) {
+  superagent.get(alphaUrl)
+    .pipe(res);
 });
 
 module.exports = expRouter;

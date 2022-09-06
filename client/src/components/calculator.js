@@ -1,5 +1,12 @@
 import React from 'react';
 
+function getInfo() {
+  fetch('http://localhost:4000/calculate')
+    .then(res => res.json())
+    .then(data => data.data.map(entry => entry.value))
+    .then(mappedData => {return mappedData})
+}
+
 class Calculator extends React.Component {
     constructor(props) {
       super(props);
@@ -38,7 +45,10 @@ class Calculator extends React.Component {
     handleSubmit(event) {
       event.preventDefault();
       this.setState({total: 20});
+      console.log(getInfo());
+      //getInfo();
       //write function to calculate total and set state for total
+      
     }
 
     saveScenario() {
