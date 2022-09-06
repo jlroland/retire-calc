@@ -28,7 +28,6 @@ class Login extends React.Component {
         console.log(data);
         if (data) {
           this.setState({userExists: true});
-          //this.props.history.push(`/queries/${this.state.username}`)
         }});
       
       // fetch(`https://retire-calc-back.herokuapp.com/queries/${this.state.username}`)
@@ -46,6 +45,26 @@ class Login extends React.Component {
     handleSubmitNew(event) {
       event.preventDefault()
       this.setState({submitted: true});
+      let newUser = {username: `${this.state.username}`, password: `${this.state.password}`}
+      fetch(`http://localhost:4000/exists/${this.state.username}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(`get ${data}`);
+        if (data) {
+          alert('Please choose another username--this one already exists.');
+        }
+        else {
+          fetch('http://localhost:4000/addUser', {
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newUser),
+          })
+          .then(res => res.json())
+          .then(data => console.log(`post ${data}`))
+        }
+      });
       //console.log(`new user: ${this.state.username}, ${this.state.password}`)
       // this.setState({
       //   username: '',
