@@ -4,7 +4,6 @@ const express = require('express');
 const app = express();
 //const path = require('path');
 const cors = require('cors');
-//const superagent = require('superagent');
 require('dotenv').config({path: './config.env'});
 const port = process.env.PORT || 5000;
 

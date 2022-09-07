@@ -8,7 +8,8 @@ function Queries() {
   console.log(userData);
   
   if (userData.length===0) {
-    fetch(`http://localhost:4000/queries/${user}`)
+    fetch(` https://retire-calc-back.herokuapp.com/queries/${user}`)
+    //fetch(`http://localhost:4000/queries/${user}`)
       .then(res => res.json())
       .then(data => {
         updateData(data);
