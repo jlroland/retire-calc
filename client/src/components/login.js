@@ -22,7 +22,8 @@ class Login extends React.Component {
     handleSubmitExisting(event) {
       event.preventDefault();
       
-      fetch(`http://localhost:4000/queries/${this.state.username}`)
+      fetch(` https://retire-calc-back.herokuapp.com/queries/${this.state.username}`)
+      //fetch(`http://localhost:4000/queries/${this.state.username}`)
       .then(res => res.json())
       .then(data => {
         console.log(data);

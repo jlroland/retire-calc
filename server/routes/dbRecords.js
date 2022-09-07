@@ -65,7 +65,7 @@ expRouter.route('/queries/:user').get(function(req, res) {
     });
 });
 
-expRouter.route('/calculate').get(function(req, res) {
+expRouter.route('/inflation').get(function(req, res) {
   superagent.get(alphaUrl)
     .pipe(res);
 });

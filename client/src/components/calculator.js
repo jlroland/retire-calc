@@ -1,29 +1,25 @@
 import React from 'react';
 
-function getInfo() {
-  fetch(' https://retire-calc-back.herokuapp.com/calculate')
-  //fetch('http://localhost:4000/calculate')
-    .then(res => res.json())
-    .then(data => data.data.map(entry => entry.value))
-    .then(mappedData => {return mappedData})
-}
 
 class Calculator extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        currentAge: 0,
-        retireAge: 0,
+        currentAge: 18,
+        retireAge: 65,
         monthlyAmount: 0,
         employerAmount: 0,
         assets: 'low',
         expenseRatio: 0,
+        inflation: 0,
         total: ''
       };
 
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
       this.handleReset = this.handleReset.bind(this);
+      this.getInfo = this.getInfo.bind(this);
+      this.calculateReturn = this.calculateReturn.bind(this);
       this.saveScenario = this.saveScenario.bind(this);
     }
 
@@ -33,8 +29,8 @@ class Calculator extends React.Component {
 
     handleReset() {
       this.setState({
-        currentAge: 0,
-        retireAge: 0,
+        currentAge: 18,
+        retireAge: 65,
         monthlyAmount: 0,
         employerAmount: 0,
         assets: 'low',
@@ -45,11 +41,38 @@ class Calculator extends React.Component {
 
     handleSubmit(event) {
       event.preventDefault();
-      this.setState({total: 20});
-      console.log(getInfo());
+      this.calculateReturn();
+      //console.log(typeof this.state.currentAge);
       //getInfo();
       //write function to calculate total and set state for total
       
+    }
+
+    getInfo() {
+      //fetch(' https://retire-calc-back.herokuapp.com/inflation')
+      fetch('http://localhost:4000/inflation')
+        .then(res => res.json())
+        .then(data => data.data.map(entry => parseFloat(entry.value)))
+        .then(mappedData => {
+          let sum = mappedData.reduce((a,b) => {return a+b}, 0)
+          let avgInflation = sum/mappedData.length;
+          //console.log(`array sum: ${avgInflation}`)
+          this.setState({inflation: avgInflation});
+        })
+    }
+
+    calculateReturn() {
+      // need to account for inflation, asset allocation, expense ratio
+      //this.getInfo();
+      let rate = 0.05;   //average rate of return from investments
+      let workingYears = this.state.retireAge - this.state.currentAge;  //how many years contributions are made
+      let compFreq = 4;    //how often returns on compounded per year
+      let intervalAdjust = 12/compFreq;  //adjusts for the fact that contribution frequency does not match compounding frequency
+      let compound = rate/compFreq;
+      let totalReturn = (parseFloat(this.state.monthlyAmount) + parseFloat(this.state.employerAmount)) * intervalAdjust * ((((1+compound)**(compFreq*workingYears))-1)/compound);
+      //console.log(parseFloat(this.state.monthlyAmount) + parseFloat(this.state.employerAmount)); 
+      //console.log(`working year: ${typeof workingYears}`);
+      this.setState({total: totalReturn});    //total portfolio amount at specified retirement age
     }
 
     saveScenario() {
@@ -60,7 +83,7 @@ class Calculator extends React.Component {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(savedQuery),
+            body: JSON.stringify(savedQuery),  // remove inflation & yield from query ?
           })
       this.handleReset();  //re-route to Saved Scenarios page?
     }
@@ -68,13 +91,14 @@ class Calculator extends React.Component {
     render() {
       return (
         <div>
+          <h3>For details about retirement planning and the concepts used below, please click <a href='/about'>here</a></h3>
           <form>
             <p>Enter your information below</p>
             <label>Current age:
-              <input name='currentAge' type='text' value={this.state.currentAge} onChange={this.handleChange}/>
+              <input name='currentAge' type='number' value={this.state.currentAge} onChange={this.handleChange}/>
             </label>
             <label>Estimated retirement age:
-              <input name='retireAge' type='text' value={this.state.retireAge} onChange={this.handleChange}/>
+              <input name='retireAge' type='number' value={this.state.retireAge} onChange={this.handleChange}/>
             </label>
             <label>Monthly contribution amount:
               <input name='monthlyAmount' type='text' value={this.state.monthlyAmount} onChange={this.handleChange}/>
