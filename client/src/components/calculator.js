@@ -1,7 +1,8 @@
 import React from 'react';
 
 function getInfo() {
-  fetch('http://localhost:4000/calculate')
+  fetch(' https://retire-calc-back.herokuapp.com/calculate')
+  //fetch('http://localhost:4000/calculate')
     .then(res => res.json())
     .then(data => data.data.map(entry => entry.value))
     .then(mappedData => {return mappedData})
@@ -53,7 +54,8 @@ class Calculator extends React.Component {
 
     saveScenario() {
       let savedQuery = this.state;
-      fetch('http://localhost:4000/addScenario', {
+      fetch(' https://retire-calc-back.herokuapp.com/addScenario', {
+      //fetch('http://localhost:4000/addScenario', {
             method: 'POST',
             headers: {
               "Content-Type": "application/json",

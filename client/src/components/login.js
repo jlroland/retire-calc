@@ -46,7 +46,8 @@ class Login extends React.Component {
       event.preventDefault()
       this.setState({submitted: true});
       let newUser = {username: `${this.state.username}`, password: `${this.state.password}`}
-      fetch(`http://localhost:4000/exists/${this.state.username}`)
+      fetch(` https://retire-calc-back.herokuapp.com/exists/${this.state.username}`)
+      //fetch(`http://localhost:4000/exists/${this.state.username}`)
       .then(res => res.json())
       .then(data => {
         console.log(`get ${data}`);
@@ -54,7 +55,8 @@ class Login extends React.Component {
           alert('Please choose another username--this one already exists.');
         }
         else {
-          fetch('http://localhost:4000/addUser', {
+          fetch(' https://retire-calc-back.herokuapp.com/addUser', {
+          //fetch('http://localhost:4000/addUser', {
             method: 'POST',
             headers: {
               "Content-Type": "application/json",
