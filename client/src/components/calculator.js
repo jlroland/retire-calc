@@ -5,6 +5,7 @@ class Calculator extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
+        currentUser: this.props.user,
         currentAge: 18,
         retireAge: 65,
         monthlyAmount: 0,
@@ -44,10 +45,10 @@ class Calculator extends React.Component {
       this.calculateReturn();
       //console.log(typeof this.state.currentAge);
       //getInfo();
-      //write function to calculate total and set state for total
       
     }
 
+    // Retrieves historical inflation data to calculate long-term average inflation
     getInfo() {
       //fetch(' https://retire-calc-back.herokuapp.com/inflation')
       fetch('http://localhost:4000/inflation')
@@ -61,6 +62,7 @@ class Calculator extends React.Component {
         })
     }
 
+    // Calculates total portfolio amount as retirement based on user inputs
     calculateReturn() {
       // need to account for inflation, asset allocation, expense ratio
       //this.getInfo();
@@ -75,10 +77,11 @@ class Calculator extends React.Component {
       this.setState({total: totalReturn});    //total portfolio amount at specified retirement age
     }
 
+    // Saves the user's inputs in database
     saveScenario() {
       let savedQuery = this.state;
-      fetch(' https://retire-calc-back.herokuapp.com/addScenario', {
-      //fetch('http://localhost:4000/addScenario', {
+      //fetch(' https://retire-calc-back.herokuapp.com/addScenario', {
+      fetch('http://localhost:4000/addScenario', {
             method: 'POST',
             headers: {
               "Content-Type": "application/json",
@@ -89,6 +92,8 @@ class Calculator extends React.Component {
     }
     
     render() {
+      //console.log(this.props.user);
+      //console.log(this.props.loggedIn);
       return (
         <div>
           <h3>For details about retirement planning and the concepts used below, please click <a href='/about'>here</a></h3>
@@ -122,6 +127,7 @@ class Calculator extends React.Component {
           </form>
           <h3>Your total portfolio amount at retirement will be: {this.state.total}</h3>
           <button onClick={this.saveScenario}>Save</button>
+          <h3>Username is {this.state.currentUser}</h3>
         </div>
       )
     }

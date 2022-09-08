@@ -5,16 +5,24 @@ function Queries() {
   let urlParams = useParams();
   let user = urlParams.user;
   const [userData, updateData] = useState([]);
-  console.log(userData);
+  //console.log(userData);
   
   if (userData.length===0) {
-    fetch(` https://retire-calc-back.herokuapp.com/queries/${user}`)
-    //fetch(`http://localhost:4000/queries/${user}`)
+    //fetch(` https://retire-calc-back.herokuapp.com/queries/${user}`)
+    fetch(`http://localhost:4000/queries/${user}`)
       .then(res => res.json())
       .then(data => {
         updateData(data);
       })
   }
+
+  // need to differentiate between multiple saved queries under same user
+  // function deleteData() {
+  //   fetch(`http://localhost:4000/delete/${}`, {
+  //     method: 'DELETE'
+  //   })
+  // }
+
   return(
     <table>
       <thead>
@@ -26,6 +34,8 @@ function Queries() {
           <th>Asset Allocation</th>
           <th>Expense Ratio</th>
           <th>Total Retirement Portfolio</th>
+          <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -38,6 +48,9 @@ function Queries() {
             <td>{item.assetAllocation}</td>
             <td>{item.expenseRatio}</td>
             <td>{item.totalPortfolio}</td>
+            <td><button>Update</button></td>
+            {/* <td><button onClick={deleteData}>Delete</button></td> */}
+            <td><button>Delete</button></td>
           </tr>
         ))}
       </tbody>

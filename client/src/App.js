@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import './css/App.css';
 import Header from './components/header';
 import Footer from './components/footer';
-import Login from './components/login';
+import Login from './components/loginForm';
 import Calculator from './components/calculator';
 import Queries from './components/savedQueries';
 import NoQueries from './components/noQueries';
