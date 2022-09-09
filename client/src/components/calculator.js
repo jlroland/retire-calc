@@ -5,7 +5,6 @@ class Calculator extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        currentUser: this.props.user,
         currentAge: 18,
         retireAge: 65,
         monthlyAmount: 0,
@@ -80,6 +79,8 @@ class Calculator extends React.Component {
     // Saves the user's inputs in database
     saveScenario() {
       let savedQuery = this.state;
+      savedQuery.username = this.props.user;
+      //console.log(savedQuery);
       //fetch(' https://retire-calc-back.herokuapp.com/addScenario', {
       fetch('http://localhost:4000/addScenario', {
             method: 'POST',
@@ -127,7 +128,7 @@ class Calculator extends React.Component {
           </form>
           <h3>Your total portfolio amount at retirement will be: {this.state.total}</h3>
           <button onClick={this.saveScenario}>Save</button>
-          <h3>Username is {this.state.currentUser}</h3>
+          <h3>Username is {this.props.user}</h3>
         </div>
       )
     }

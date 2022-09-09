@@ -2,6 +2,7 @@ const express = require('express');
 const expRouter = express.Router();
 const dbo = require('../db_conn/connection');
 const superagent = require('superagent');
+const ObjectId = require('mongodb').ObjectId;
 const alphaUrl =`https://www.alphavantage.co/query?function=INFLATION&apikey=${process.env.ALPHA_KEY}`;
 
 expRouter.route('/exists/:user').get(function(req, res) {
@@ -33,6 +34,7 @@ expRouter.route('/addUser').post(function(req, res) {
 
 expRouter.route('/addScenario').post(function(req, res) {
   let newScenario = {
+    username: req.body.username,
     currentAge: req.body.currentAge,
     retireAge: req.body.retireAge,
     monthlyContribution: req.body.monthlyAmount,
@@ -68,6 +70,19 @@ expRouter.route('/queries/:user').get(function(req, res) {
 expRouter.route('/inflation').get(function(req, res) {
   superagent.get(alphaUrl)
     .pipe(res);
+});
+
+expRouter.route('/delete/:id').delete(function (req,res) {
+  let dbConnect = dbo.getDb('retire_db');
+  let removeQuery = {_id: ObjectId(req.params.id)};
+  console.log(removeQuery);
+  dbConnect
+    .collection('userQueries')
+    .deleteOne(removeQuery, function (err, obj) {
+      if (err) throw err;
+      console.log('document delete');
+      res.json(obj);
+    });
 });
 
 module.exports = expRouter;
