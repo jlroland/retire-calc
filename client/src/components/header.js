@@ -1,18 +1,18 @@
 import React from 'react';
+import { NavLink } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-function Header() {
+function Header(props) {
+  
   return (
     <div>
       <h1>How Much is Enough?</h1>
         <nav>
-          <ul className='nav'>
-            <li><a href='/'>Home</a></li>
-            <li><a href='/calculate'>Calculate</a></li>
-            <li><a href='/queries/'>Saved Scenarios</a></li>
-            <li><a href='/about'>About</a></li>
-          </ul> 
-        </nav>  
+          <NavLink to='/'>Home</NavLink>
+          {props.loggedIn ? <NavLink to={`/calculate/${props.user}`}>Calculator</NavLink> : <NavLink to='/calculate'>Calculator</NavLink>}
+          {props.loggedIn ? <NavLink to={`/queries/${props.user}`}>Saved Scenarios</NavLink> : <NavLink to='/queries'>Saved Scenarios</NavLink>}
+          <NavLink to='/about'>About</NavLink>
+        </nav> 
     </div>
   )
 }

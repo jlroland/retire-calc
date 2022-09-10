@@ -7,7 +7,7 @@ class Login extends React.Component {
       this.state = {
         username: '',
         password: '',
-        submitted: false,
+        //submitted: false,
         userExists: false
       };
       this.handleChange = this.handleChange.bind(this);
@@ -17,15 +17,17 @@ class Login extends React.Component {
 
     handleChange(event) {
       this.setState({[event.target.name]: event.target.value});
+      this.props.userUpdate(event.target.value);
     }
 
     handleSubmitExisting(event) {
       event.preventDefault();
-      
+      this.props.submitLogin();
+      //fetch(` https://retire-calc-back.herokuapp.com/queries/${this.state.username}`)
       fetch(`http://localhost:4000/queries/${this.state.username}`)
       .then(res => res.json())
       .then(data => {
-        console.log(data);
+        //console.log(data);
         if (data) {
           this.setState({userExists: true});
         }});
@@ -34,7 +36,7 @@ class Login extends React.Component {
       // .then(res => res.json())
       // .then(data => console.log(data))
 
-      this.setState({submitted: true});
+      //this.setState({submitted: true});
       //console.log(`existing user: ${this.state.username}, ${this.state.password}`)
       // this.setState({
       //   username: '',
@@ -44,10 +46,11 @@ class Login extends React.Component {
 
     handleSubmitNew(event) {
       event.preventDefault()
-      this.setState({submitted: true});
+      //this.setState({submitted: true});
+      this.props.submitLogin(this.state.username);
       let newUser = {username: `${this.state.username}`, password: `${this.state.password}`}
-      fetch(` https://retire-calc-back.herokuapp.com/exists/${this.state.username}`)
-      //fetch(`http://localhost:4000/exists/${this.state.username}`)
+      //fetch(` https://retire-calc-back.herokuapp.com/exists/${this.state.username}`)
+      fetch(`http://localhost:4000/exists/${this.state.username}`)
       .then(res => res.json())
       .then(data => {
         console.log(`get ${data}`);
@@ -55,8 +58,8 @@ class Login extends React.Component {
           alert('Please choose another username--this one already exists.');
         }
         else {
-          fetch(' https://retire-calc-back.herokuapp.com/addUser', {
-          //fetch('http://localhost:4000/addUser', {
+          //fetch(' https://retire-calc-back.herokuapp.com/addUser', {
+          fetch('http://localhost:4000/addUser', {
             method: 'POST',
             headers: {
               "Content-Type": "application/json",
@@ -65,6 +68,7 @@ class Login extends React.Component {
           })
           .then(res => res.json())
           .then(data => console.log(`post ${data}`))
+          .then(this.setState({userExists: true}))
         }
       });
       //console.log(`new user: ${this.state.username}, ${this.state.password}`)
@@ -77,8 +81,7 @@ class Login extends React.Component {
     render() {
       return (
         <div>
-          {(this.state.submitted===true) && (this.state.userExists===true) && (<Navigate to={`/queries/${this.state.username}`} replace={true} />)}
-          {/* {(this.state.submitted===true) && (this.state.userExists===false) && (<Navigate to='/queries' replace={true} />)} */}
+          {(this.state.userExists===true) && (<Navigate to={`/queries/${this.state.username}`} replace={true} />)}
           <form name='existingUser' onSubmit={this.handleSubmitExisting}>
             <p>Enter username and password</p>
             <label>Username:
