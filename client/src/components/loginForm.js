@@ -17,37 +17,29 @@ class Login extends React.Component {
 
     handleChange(event) {
       this.setState({[event.target.name]: event.target.value});
-      this.props.userUpdate(event.target.value);
     }
 
     handleSubmitExisting(event) {
       event.preventDefault();
-      this.props.submitLogin();
       //fetch(` https://retire-calc-back.herokuapp.com/queries/${this.state.username}`)
-      fetch(`http://localhost:4000/queries/${this.state.username}`)
+      fetch(`http://localhost:4000/exists/${this.state.username}`)
       .then(res => res.json())
       .then(data => {
-        //console.log(data);
-        if (data) {
+      //console.log(`user exists query ${data.username}`);
+        if (data.password === this.state.password) {
+          this.props.submitLogin();
+          this.props.userUpdate(this.state.username);
           this.setState({userExists: true});
-        }});
-      
-      // fetch(`https://retire-calc-back.herokuapp.com/queries/${this.state.username}`)
-      // .then(res => res.json())
-      // .then(data => console.log(data))
-
-      //this.setState({submitted: true});
-      //console.log(`existing user: ${this.state.username}, ${this.state.password}`)
-      // this.setState({
-      //   username: '',
-      //   password: ''
-      // })
+        }
+        if (!data || data.password !== this.state.password) {
+          alert('The username or password is incorrect. Please try again.');
+        }
+        });
     }
 
     handleSubmitNew(event) {
       event.preventDefault()
       //this.setState({submitted: true});
-      this.props.submitLogin(this.state.username);
       let newUser = {username: `${this.state.username}`, password: `${this.state.password}`}
       //fetch(` https://retire-calc-back.herokuapp.com/exists/${this.state.username}`)
       fetch(`http://localhost:4000/exists/${this.state.username}`)
@@ -57,7 +49,7 @@ class Login extends React.Component {
         if (data) {
           alert('Please choose another username--this one already exists.');
         }
-        else {
+        if (!data) {
           //fetch(' https://retire-calc-back.herokuapp.com/addUser', {
           fetch('http://localhost:4000/addUser', {
             method: 'POST',
@@ -67,8 +59,14 @@ class Login extends React.Component {
             body: JSON.stringify(newUser),
           })
           .then(res => res.json())
-          .then(data => console.log(`post ${data}`))
-          .then(this.setState({userExists: true}))
+          .then(data => {
+            if (data) {
+              this.props.submitLogin();
+              this.props.userUpdate(this.state.username);
+              this.setState({userExists: true});
+            }
+          })
+          // .then(this.setState({userExists: true}))
         }
       });
       //console.log(`new user: ${this.state.username}, ${this.state.password}`)
@@ -85,16 +83,16 @@ class Login extends React.Component {
           <form name='existingUser' onSubmit={this.handleSubmitExisting}>
             <p>Enter username and password</p>
             <label>Username:
-              <input name='username' type='text' value={this.state.username} onChange={this.handleChange}/>
+              <input name='username' type='text' value={this.state.username} onChange={this.handleChange} required/>
             </label>
             <label>Password:
-            <input name='password' type='text' value={this.state.password} onChange={this.handleChange}/>
+            <input name='password' type='text' value={this.state.password} onChange={this.handleChange} required/>
             </label>
             <input type='submit' value='Sign In'/>
           </form>
           <form name='newUser' onSubmit={this.handleSubmitNew}>
-            <input name='usernameNew' type='hidden' value={this.state.username} onChange={this.handleChange}/>
-            <input name='passwordNew' type='hidden' value={this.state.password} onChange={this.handleChange}/>
+            <input name='username' type='hidden' value={this.state.username} onChange={this.handleChange}/>
+            <input name='password' type='hidden' value={this.state.password} onChange={this.handleChange}/>
             <input type='submit' value='Create Account'/>
           </form>
         </div>

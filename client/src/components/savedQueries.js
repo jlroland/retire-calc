@@ -28,7 +28,7 @@ class Queries extends React.Component {
       fetch(`http://localhost:4000/queries/${this.props.user}`)
         .then(res => res.json())
         .then(data => {
-          data.map(entry => entry.isHidden = false);
+          // data.map(entry => entry.isHidden = false);
           this.setState({userData: data});
           //console.log(data);
         })
