@@ -117,7 +117,6 @@ class Calculator extends React.Component {
                 <option value='low'>Low volatility</option>
                 <option value='medium'>Medium volatility</option>
                 <option value='high'>High volatility</option>
-                <option value='blend'>Target Date Blend</option>
               </select>
             </label>
             <label>Expense ratio:
