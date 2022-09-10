@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Logout from './logout';
 
 function Header(props) {
   
@@ -13,6 +14,7 @@ function Header(props) {
           {props.loggedIn ? <NavLink to={`/queries/${props.user}`}>Saved Scenarios</NavLink> : <NavLink to='/queries'>Saved Scenarios</NavLink>}
           <NavLink to='/about'>About</NavLink>
         </nav> 
+      {props.loggedIn && <Logout user={props.user}/>}
     </div>
   )
 }

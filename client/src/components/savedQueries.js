@@ -15,7 +15,9 @@ class Queries extends React.Component {
       newTotal: ''
     };
 
+    this.handleChange = this.handleChange.bind(this);
     this.editScenario = this.editScenario.bind(this);
+    this.calculateUpdate = this.calculateUpdate.bind(this);
     this.updateScenario = this.updateScenario.bind(this);
     this.deleteScenario = this.deleteScenario.bind(this);
   };
@@ -41,6 +43,8 @@ class Queries extends React.Component {
     //console.log('clicked');
     let hiddenRow = document.getElementById(id);
     let hiddenStatus = hiddenRow.getAttribute('hidden');
+    //console.log(hiddenRow);
+    //console.log(hiddenStatus);
     let editButton = document.getElementById(`button${id}`);
     if (hiddenStatus) {
       hiddenRow.removeAttribute('hidden');
@@ -51,10 +55,34 @@ class Queries extends React.Component {
     }
   }
 
+  calculateUpdate() {
+    // need to account for inflation, asset allocation, expense ratio
+    //this.getInfo();
+    let rate = 0.05;   //average rate of return from investments
+    let workingYears = this.state.newRetireAge - this.state.newCurrentAge;  //how many years contributions are made
+    let compFreq = 4;    //how often returns on compounded per year
+    let intervalAdjust = 12/compFreq;  //adjusts for the fact that contribution frequency does not match compounding frequency
+    let compound = rate/compFreq;
+    let totalReturn = (parseFloat(this.state.newMonthlyAmount) + parseFloat(this.state.newEmployerAmount)) * intervalAdjust * ((((1+compound)**(compFreq*workingYears))-1)/compound);
+    //console.log(parseFloat(this.state.monthlyAmount) + parseFloat(this.state.employerAmount)); 
+    //console.log(`working year: ${typeof workingYears}`);
+    this.setState({newTotal: totalReturn});    //total portfolio amount at specified retirement age
+  }
+
   updateScenario(id) {
-    // use calculator function to populate newTotal
-    // fetch with post
-    // update server routes to do mongo update
+    this.calculateUpdate();
+    let updatedQuery = this.state;
+    updatedQuery.username = this.props.user;
+    //console.log(savedQuery);
+    //fetch(' https://retire-calc-back.herokuapp.com/addScenario', {
+    fetch(`http://localhost:4000/updateScenario/${id}`, {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedQuery),  // remove inflation & yield from query ?
+        })
+    window.location.reload(false);
   }
 
   // need to differentiate between multiple saved queries under same user
@@ -108,8 +136,8 @@ class Queries extends React.Component {
                 <option value='high'>High volatility</option>
                 </select></td>
                 <td><input name='newExpenseRatio' type='text' onChange={this.handleChange}/></td>
-                {/* <td>calculate total portfolio</td> */}
-                <td></td>
+                <td>{this.state.newTotal}</td>
+                <td><button onClick={() => this.calculateUpdate()}>Calculate</button></td>
                 <td><button onClick={() => this.updateScenario(item._id)}>Update</button></td>
               </tr>
             </Fragment>

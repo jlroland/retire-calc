@@ -35,6 +35,7 @@ class Calculator extends React.Component {
         employerAmount: 0,
         assets: 'low',
         expenseRatio: 0,
+        inflation: 0,
         total: ''
       });
     }
@@ -89,12 +90,10 @@ class Calculator extends React.Component {
             },
             body: JSON.stringify(savedQuery),  // remove inflation & yield from query ?
           })
-      this.handleReset();  //re-route to Saved Scenarios page?
+      this.handleReset();
     }
     
     render() {
-      //console.log(this.props.user);
-      //console.log(this.props.loggedIn);
       return (
         <div>
           <h3>For details about retirement planning and the concepts used below, please click <a href='/about'>here</a></h3>
