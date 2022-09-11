@@ -89,11 +89,11 @@ class Login extends React.Component {
             <Form.Text>Enter username and password</Form.Text>
             <Form.Group controlId='username'>
               <Form.Label>Username:</Form.Label>
-              <Form.Control type='text' onChange={this.handleChange} required></Form.Control>
+              <Form.Control type='text' onChange={this.handleChange} required/>
             </Form.Group>
             <Form.Group controlId='password'>
               <Form.Label>Password:</Form.Label>
-              <Form.Control type='password' onChange={this.handleChange} required></Form.Control>
+              <Form.Control type='password' onChange={this.handleChange} required/>
             </Form.Group>
             <Button type='submit'>Sign In</Button>
           {/* <form name='newUser' onSubmit={this.handleSubmitNew}>
@@ -108,11 +108,11 @@ class Login extends React.Component {
               <Form onSubmit={this.handleSubmitNew}>
                 <Form.Group controlId='username'>
                   <Form.Label>Username:</Form.Label>
-                  <Form.Control type='text' onChange={this.handleChange} required></Form.Control>
+                  <Form.Control type='text' onChange={this.handleChange} required/>
                 </Form.Group>
                 <Form.Group controlId='password'>
                   <Form.Label>Password:</Form.Label>
-                  <Form.Control type='password' onChange={this.handleChange} required></Form.Control>
+                  <Form.Control type='password' onChange={this.handleChange} required/>
                 </Form.Group>
                 <Button type='submit'>Create Account</Button>
               </Form>

@@ -1,5 +1,6 @@
 import React from 'react';
-
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 class Calculator extends React.Component {
     constructor(props) {
@@ -24,7 +25,7 @@ class Calculator extends React.Component {
     }
 
     handleChange(event) {
-      this.setState({[event.target.name]: event.target.value});
+      this.setState({[event.target.id]: event.target.value});
     }
 
     handleReset() {
@@ -90,43 +91,48 @@ class Calculator extends React.Component {
             },
             body: JSON.stringify(savedQuery),  // remove inflation & yield from query ?
           })
-      this.handleReset();
+      window.location.reload(false);
     }
     
     render() {
       return (
         <div>
           <h3>For details about retirement planning and the concepts used below, please click <a href='/about'>here</a></h3>
-          <form>
-            <p>Enter your information below</p>
-            <label>Current age:
-              <input name='currentAge' type='number' value={this.state.currentAge} onChange={this.handleChange}/>
-            </label>
-            <label>Estimated retirement age:
-              <input name='retireAge' type='number' value={this.state.retireAge} onChange={this.handleChange}/>
-            </label>
-            <label>Monthly contribution amount:
-              <input name='monthlyAmount' type='text' value={this.state.monthlyAmount} onChange={this.handleChange}/>
-            </label>
-            <label>Employer contribution amount:
-              <input name='employerAmount' type='text' value={this.state.employerAmount} onChange={this.handleChange}/>
-            </label>
-            <label>Asset allocation:
-              <select name='assets' value={this.state.assets} onChange={this.handleChange}>
+          <Form>
+            <Form.Text>Enter your information below</Form.Text>
+            <Form.Group controlId='currentAge'>
+              <Form.Label>Current Age</Form.Label>
+              <Form.Control type='number' onChange={this.handleChange} />
+            </Form.Group>
+            <Form.Group controlId='retireAge'>
+              <Form.Label>Estimated Retirement Age</Form.Label>
+              <Form.Control type='number' onChange={this.handleChange} />
+            </Form.Group>
+            <Form.Group controlId='monthlyAmount'>
+              <Form.Label>Your Monthly Contribution</Form.Label>
+              <Form.Control type='text' onChange={this.handleChange} />
+            </Form.Group>
+            <Form.Group controlId='employerAmount'>
+              <Form.Label>Employer's Monthly Contribution</Form.Label>
+              <Form.Control type='text' onChange={this.handleChange} />
+            </Form.Group>
+            <Form.Group controlId='assets'>
+              <Form.Label>Asset Allocation</Form.Label>
+              <Form.Select onChange={this.handleChange}>
                 <option value='low'>Low volatility</option>
                 <option value='medium'>Medium volatility</option>
                 <option value='high'>High volatility</option>
-              </select>
-            </label>
-            <label>Expense ratio:
-              <input name='expenseRatio' type='text' value={this.state.expenseRatio} onChange={this.handleChange}/>
-            </label>
-            <button onClick={this.handleSubmit}>Calculate</button>
-            <button onClick={this.handleReset}>Reset</button>
-          </form>
-          <h3>Your total portfolio amount at retirement will be: {this.state.total}</h3>
-          <button onClick={this.saveScenario}>Save</button>
-          <h3>Username is {this.props.user}</h3>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group controlId='expenseRatio'>
+              <Form.Label>Expense Ratio</Form.Label>
+              <Form.Control type='text' onChange={this.handleChange} />
+            </Form.Group>
+            <Button type='submit' onClick={this.handleSubmit}>Calculate</Button>
+            <Button type='reset'>Reset</Button>
+            <Form.Text>Your total portfolio amount at retirement will be: {this.state.total}</Form.Text>
+            <Button type='submit' onClick={this.saveScenario}>Save</Button>
+          </Form>
         </div>
       )
     }
