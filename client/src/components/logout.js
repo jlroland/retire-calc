@@ -9,7 +9,7 @@ function Logout (props) {
   
   return (
     <div>
-      <h1>You are logged in as {props.user}</h1>
+      <p>You are logged in as {props.user}</p>
       <button onClick={logOut}>Log Out</button>
     </div>
   )

@@ -1,11 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import "bootstrap/dist/css/bootstrap.min.css";
+// import 'bootstrap/dist/css/bootstrap.min.css';
+//import "bootstrap/dist/js/bootstrap.bundle.min";
 import './css/App.css';
 import Header from './components/header';
 import Footer from './components/footer';
 import Login from './components/loginForm';
-import Logout from './components/logoutPage';
+import Welcome from './components/welcome';
 import Calculator from './components/calculator';
 import Queries from './components/savedQueries';
 import NoQueries from './components/noQueries';
@@ -38,7 +39,7 @@ class App extends React.Component {
         <BrowserRouter>
           <Header loggedIn={this.state.isLoggedIn} user={this.state.username}/>
           <Routes>
-            <Route path='/' element={this.state.isLoggedIn ? <Logout user={this.state.username} loggedIn={this.state.isLoggedIn}/> : <Login userUpdate={this.updateUser} submitLogin={this.loggingIn}/>} />
+            <Route path='/' element={this.state.isLoggedIn ? <Welcome user={this.state.username} /> : <Login userUpdate={this.updateUser} submitLogin={this.loggingIn}/>} />
             <Route path='/calculate' element={<Calculator />} />
             <Route path='/calculate/:user' element={<Calculator user={this.state.username}/>} />
             <Route path='/queries' element={<NoQueries />} />

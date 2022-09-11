@@ -41,12 +41,36 @@ expRouter.route('/addScenario').post(function(req, res) {
     employerContribution: req.body.employerAmount,
     assetAllocation: req.body.assets,
     expenseRatio: req.body.expenseRatio,
+    inflation: req.body.inflation,
     totalPortfolio: req.body.total,
   };
   let dbConnect = dbo.getDb('retire_db');
   dbConnect
     .collection('userQueries')
     .insertOne(newScenario, function (err, result) {
+      if (err) throw err;
+      //console.log(`Scenario added: ${result}`);
+      res.json(result);
+    });
+});
+
+expRouter.route('/updateScenario/:id').post(function(req, res) {
+  let queryId = {_id: ObjectId(req.params.id)};
+  let updatedScenario = {
+    username: req.body.username,
+    currentAge: req.body.newCurrentAge,
+    retireAge: req.body.newRetireAge,
+    monthlyContribution: req.body.newMonthlyAmount,
+    employerContribution: req.body.newEmployerAmount,
+    assetAllocation: req.body.newAssets,
+    expenseRatio: req.body.newExpenseRatio,
+    inflation: req.body.inflation,
+    totalPortfolio: req.body.newTotal,
+  };
+  let dbConnect = dbo.getDb('retire_db');
+  dbConnect
+    .collection('userQueries')
+    .replaceOne(queryId, updatedScenario, function (err, result) {
       if (err) throw err;
       //console.log(`Scenario added: ${result}`);
       res.json(result);

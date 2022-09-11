@@ -1,4 +1,8 @@
 import React, { Fragment } from 'react';
+import Table from 'react-bootstrap/Table';
+import Collapse from 'react-bootstrap/Collapse';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 class Queries extends React.Component {
   constructor(props) {
@@ -12,10 +16,13 @@ class Queries extends React.Component {
       newAssets: 'low',
       newExpenseRatio: 0,
       inflation: 0,
-      newTotal: ''
+      newTotal: '',
+      openRow: ''
     };
 
-    this.editScenario = this.editScenario.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.toggleRow = this.toggleRow.bind(this);
+    this.calculateUpdate = this.calculateUpdate.bind(this);
     this.updateScenario = this.updateScenario.bind(this);
     this.deleteScenario = this.deleteScenario.bind(this);
   };
@@ -26,7 +33,7 @@ class Queries extends React.Component {
       fetch(`http://localhost:4000/queries/${this.props.user}`)
         .then(res => res.json())
         .then(data => {
-          data.map(entry => entry.isHidden = false);
+          // data.map(entry => entry.isHidden = false);
           this.setState({userData: data});
           //console.log(data);
         })
@@ -34,27 +41,40 @@ class Queries extends React.Component {
   }
 
   handleChange(event) {
-    this.setState({[event.target.name]: event.target.value});
+    this.setState({[event.target.id]: event.target.value});
   }
 
-  editScenario(id) {
-    //console.log('clicked');
-    let hiddenRow = document.getElementById(id);
-    let hiddenStatus = hiddenRow.getAttribute('hidden');
-    let editButton = document.getElementById(`button${id}`);
-    if (hiddenStatus) {
-      hiddenRow.removeAttribute('hidden');
-      editButton.textContent = 'Cancel';
-    } else {
-      hiddenRow.setAttribute('hidden', 'hidden');
-      editButton.textContent = 'Edit';
-    }
+  toggleRow(id) {
+    this.state.openRow === id ? this.setState({openRow: ''}) : this.setState({openRow: id});
+  }
+
+  calculateUpdate() {
+    // need to account for inflation, asset allocation, expense ratio
+    //this.getInfo();
+    let rate = 0.05;   //average rate of return from investments
+    let workingYears = this.state.newRetireAge - this.state.newCurrentAge;  //how many years contributions are made
+    let compFreq = 4;    //how often returns on compounded per year
+    let intervalAdjust = 12/compFreq;  //adjusts for the fact that contribution frequency does not match compounding frequency
+    let compound = rate/compFreq;
+    let total = (parseFloat(this.state.newMonthlyAmount) + parseFloat(this.state.newEmployerAmount)) * intervalAdjust * ((((1+compound)**(compFreq*workingYears))-1)/compound);
+    let totalReturn = parseInt(total);
+    this.setState({newTotal: totalReturn});    //total portfolio amount at specified retirement age
   }
 
   updateScenario(id) {
-    // use calculator function to populate newTotal
-    // fetch with post
-    // update server routes to do mongo update
+    this.calculateUpdate();
+    let updatedQuery = this.state;
+    updatedQuery.username = this.props.user;
+    //console.log(savedQuery);
+    //fetch(' https://retire-calc-back.herokuapp.com/addScenario', {
+    fetch(`http://localhost:4000/updateScenario/${id}`, {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedQuery),  // remove inflation & yield from query ?
+        })
+    window.location.reload(false);
   }
 
   // need to differentiate between multiple saved queries under same user
@@ -71,7 +91,7 @@ class Queries extends React.Component {
   }
   render () {
     return (
-      <table>
+      <Table bordered hover>
         <thead>
           <tr>
             <th>Current Age</th>
@@ -94,28 +114,30 @@ class Queries extends React.Component {
                 <td>{item.assetAllocation}</td>
                 <td>{item.expenseRatio}</td>
                 <td>{item.totalPortfolio}</td>
-                <td><button id={'button'+item._id} onClick={() => this.editScenario(item._id)}>Edit</button></td>
-                <td><button onClick={() => this.deleteScenario(item._id)}>Delete</button></td>
-              </tr> 
-              <tr id={item._id} hidden>
-                <td><input name='newCurrentAge' type='number' onChange={this.handleChange}/></td>
-                <td><input name='newRetireAge' type='number' onChange={this.handleChange}/></td>
-                <td><input name='newMonthlyAmount' type='text' onChange={this.handleChange}/></td>
-                <td><input name='newEmployerAmount' type='text' onChange={this.handleChange}/></td>
-                <td><select name='newAssets' onChange={this.handleChange}>
-                <option value='low'>Low volatility</option>
-                <option value='medium'>Medium volatility</option>
-                <option value='high'>High volatility</option>
-                </select></td>
-                <td><input name='newExpenseRatio' type='text' onChange={this.handleChange}/></td>
-                {/* <td>calculate total portfolio</td> */}
-                <td></td>
-                <td><button onClick={() => this.updateScenario(item._id)}>Update</button></td>
+                <td><Button onClick={() => {this.toggleRow(item._id)}}>Edit</Button></td>
+                <td><Button onClick={() => this.deleteScenario(item._id)}>Delete</Button></td>
               </tr>
+              <Collapse in={this.state.openRow === item._id}>
+                <tr>
+                  <td><Form.Control id='newCurrentAge' type='number' onChange={this.handleChange}/></td>
+                  <td><Form.Control id='newRetireAge' type='number' onChange={this.handleChange}/></td>
+                  <td><Form.Control id='newMonthlyAmount' type='text' onChange={this.handleChange}/></td>
+                  <td><Form.Control id='newEmployerAmount' type='text' onChange={this.handleChange}/></td>
+                  <td><Form.Select id='newAssets' onChange={this.handleChange}>
+                  <option value='low'>Low volatility</option>
+                  <option value='medium'>Medium volatility</option>
+                  <option value='high'>High volatility</option>
+                  </Form.Select></td>
+                  <td><Form.Control id='newExpenseRatio' type='text' onChange={this.handleChange}/></td>
+                  <td>{this.state.newTotal}</td>
+                  <td><Button onClick={() => this.calculateUpdate()}>Calculate</Button></td>
+                  <td><Button onClick={() => this.updateScenario(item._id)}>Update</Button></td>
+                </tr>
+              </Collapse>
             </Fragment>
           ))}
         </tbody>
-      </table>
+      </Table>
     )
   }
 }

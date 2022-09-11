@@ -1,5 +1,8 @@
 import React from 'react';
 import { Navigate } from "react-router-dom";
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Accordion from 'react-bootstrap/Accordion';
 
 class Login extends React.Component {
     constructor(props) {
@@ -16,48 +19,42 @@ class Login extends React.Component {
     }
 
     handleChange(event) {
-      this.setState({[event.target.name]: event.target.value});
-      this.props.userUpdate(event.target.value);
+      //console.log({[event.target.id]: event.target.value});
+      this.setState({[event.target.id]: event.target.value});
     }
 
     handleSubmitExisting(event) {
       event.preventDefault();
-      this.props.submitLogin();
+      //console.log(this.state.username);
       //fetch(` https://retire-calc-back.herokuapp.com/queries/${this.state.username}`)
-      fetch(`http://localhost:4000/queries/${this.state.username}`)
+      fetch(`http://localhost:4000/exists/${this.state.username}`)
       .then(res => res.json())
       .then(data => {
-        //console.log(data);
-        if (data) {
+      //console.log(`user exists query ${data.username}`);
+        if (data.password === this.state.password) {
+          this.props.submitLogin();
+          this.props.userUpdate(this.state.username);
           this.setState({userExists: true});
-        }});
-      
-      // fetch(`https://retire-calc-back.herokuapp.com/queries/${this.state.username}`)
-      // .then(res => res.json())
-      // .then(data => console.log(data))
-
-      //this.setState({submitted: true});
-      //console.log(`existing user: ${this.state.username}, ${this.state.password}`)
-      // this.setState({
-      //   username: '',
-      //   password: ''
-      // })
+        }
+        if (!data || data.password !== this.state.password) {
+          alert('The username or password is incorrect. Please try again.');
+        }
+        });
     }
 
     handleSubmitNew(event) {
       event.preventDefault()
       //this.setState({submitted: true});
-      this.props.submitLogin(this.state.username);
       let newUser = {username: `${this.state.username}`, password: `${this.state.password}`}
       //fetch(` https://retire-calc-back.herokuapp.com/exists/${this.state.username}`)
       fetch(`http://localhost:4000/exists/${this.state.username}`)
       .then(res => res.json())
       .then(data => {
-        console.log(`get ${data}`);
+        //console.log(`get ${data}`);
         if (data) {
           alert('Please choose another username--this one already exists.');
         }
-        else {
+        if (!data) {
           //fetch(' https://retire-calc-back.herokuapp.com/addUser', {
           fetch('http://localhost:4000/addUser', {
             method: 'POST',
@@ -67,8 +64,14 @@ class Login extends React.Component {
             body: JSON.stringify(newUser),
           })
           .then(res => res.json())
-          .then(data => console.log(`post ${data}`))
-          .then(this.setState({userExists: true}))
+          .then(data => {
+            if (data) {
+              this.props.submitLogin();
+              this.props.userUpdate(this.state.username);
+              this.setState({userExists: true});
+            }
+          })
+          // .then(this.setState({userExists: true}))
         }
       });
       //console.log(`new user: ${this.state.username}, ${this.state.password}`)
@@ -82,21 +85,41 @@ class Login extends React.Component {
       return (
         <div>
           {(this.state.userExists===true) && (<Navigate to={`/queries/${this.state.username}`} replace={true} />)}
-          <form name='existingUser' onSubmit={this.handleSubmitExisting}>
-            <p>Enter username and password</p>
-            <label>Username:
-              <input name='username' type='text' value={this.state.username} onChange={this.handleChange}/>
-            </label>
-            <label>Password:
-            <input name='password' type='text' value={this.state.password} onChange={this.handleChange}/>
-            </label>
-            <input type='submit' value='Sign In'/>
-          </form>
-          <form name='newUser' onSubmit={this.handleSubmitNew}>
-            <input name='usernameNew' type='hidden' value={this.state.username} onChange={this.handleChange}/>
-            <input name='passwordNew' type='hidden' value={this.state.password} onChange={this.handleChange}/>
-            <input type='submit' value='Create Account'/>
-          </form>
+          <Form onSubmit={this.handleSubmitExisting}>
+            <Form.Text>Enter username and password</Form.Text>
+            <Form.Group controlId='username'>
+              <Form.Label>Username:</Form.Label>
+              <Form.Control type='text' onChange={this.handleChange} required/>
+            </Form.Group>
+            <Form.Group controlId='password'>
+              <Form.Label>Password:</Form.Label>
+              <Form.Control type='password' onChange={this.handleChange} required/>
+            </Form.Group>
+            <Button type='submit'>Sign In</Button>
+          {/* <form name='newUser' onSubmit={this.handleSubmitNew}>
+            <input name='username' type='hidden' value={this.state.username} onChange={this.handleChange}/>
+            <input name='password' type='hidden' value={this.state.password} onChange={this.handleChange}/>
+            <input type='submit' value='Create Account'/>  */}
+          </Form>
+          <Accordion>
+            <Accordion.Item eventKey='0'>
+              <Accordion.Header>New User? Click to Create Account...</Accordion.Header>
+              <Accordion.Body>
+              <Form onSubmit={this.handleSubmitNew}>
+                <Form.Group controlId='username'>
+                  <Form.Label>Username:</Form.Label>
+                  <Form.Control type='text' onChange={this.handleChange} required/>
+                </Form.Group>
+                <Form.Group controlId='password'>
+                  <Form.Label>Password:</Form.Label>
+                  <Form.Control type='password' onChange={this.handleChange} required/>
+                </Form.Group>
+                <Button type='submit'>Create Account</Button>
+              </Form>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+          <h3>NOTE: This is NOT a secure login because this place is currently a playground.  Please don't use sensitive information--just make up something fun!</h3>
         </div>
       )
     }
